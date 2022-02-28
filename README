@@ -1,0 +1,25 @@
+Kacper Murdzek km1299
+Taranvir Singh ts903
+
+Preliminary Information Before Running the Program
+When identifying the flags for the program to use the -s flag should be used before inserting any files into the terminal. The reasoning for this is because if it is used after the filenames the files have already been enqueued and made ready for tokenizing. All other flags can be used anywhere in the input, the flags will be overwritten if the same flag is used twice, the value will always be the latest flag in the input. The JSD of each combination of files will be printed in order from greatest JSD to least JSD. If there is only one file input there will be nothing printed in the final output as there is no JSD to be calculated.
+
+Algorithm
+The algorithm begins by initializing a file queue and directory queue, then iterates through the user input and sets the program parameters based on the flags provided and enqueues any directories or files to their respective queues. From there we start the directory threads to iterate through the directories and enqueue any files or directories to their respective queues. We use pthread_mutex_unlock and pthread_mutex_lock to ensure what is being enqueued and dequeued is synchronized and no one has access to the queues while one is in the process of enqueuing or dequeuing from the queue. Once all directories have been iterated through and all files have been added to the file queue, we start the file threads and dequeue all the files and tokenize them and build binary trees of the words and update the frequencies of the words as we insert them to the trees. As we are creating these trees we are storing the file name along with the trees in a data structure which will then be used in calculating the JSD between two files. 
+	We then start the analysis threads that will compute the JSD between two files for every combination of all inputs by comparing the two files binary trees. As we are computing the JSD the result is held in another data structure that stores the names of the files and their JSD. Once all file combinations have been iterated through the final list of the combinations of files is sorted in greatest JSD to least JSD order to then be printed to the terminal.
+
+
+Testing Strategy
+In order to throughly test our code we used all kinds of unique cases and tried thinking of as many test cases as we could think of. We used cases such as using over 100 threads for queueing,dequeuing, and analyssis along with a different variety of .txt and .c files along with several directories. We tested with blank files, files with 1 word, and files with several lines. We tested using a different combination of flags and were always successful. If any incorrect input is given, we notified the user and terminated the program. We really pushed our program to the limits and succeeded in all cases. A few examples will be listed below.
+
+./compare -d100 -f100 -a100  hithere.txt hioutthere.txt /home/taranvir/CS214/assignment3/                ---success
+./compare -d4 -f1 -a50  hithere.txt hioutthere.txt /home/taranvir/CS214/assignment3/            		 ---success
+./compare -f10 -a15  hithere hioutthere /home/taranvir/CS214/assignment3/				 				 ---success
+./compare -x hithere.txt hioutthere.txt /home/taranvir/CS214/assignment3/                				 ---return failure
+./compare -f0 hithere.txt hioutthere.txt /home/taranvir/CS214/assignment3/				 				 ---return failure
+./compare - hithere.txt hioutthere.txt /home/taranvir/CS214/assignment3/				 				 ---return failure
+./compare hithere.txt hioutthere.txt /home/taranvir/CS214/assignment3/ /home/taranvir/CS214/assignment3/ ---success
+./compare blank.txt longword.txt																		 ---success
+./compare hithere hiouthere																				 ---success
+./compare extremelyLongFile.txt directory                                                                ---success
+
